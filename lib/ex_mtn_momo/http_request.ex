@@ -1,4 +1,5 @@
 defmodule ExMtnMomo.HttpRequest do
+  @moduledoc false
   @moduledoc """
   Provides HTTP request functionality for the ExMtnMomo library.
 

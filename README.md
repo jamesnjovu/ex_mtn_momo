@@ -54,6 +54,102 @@ config :ex_mtn_momo,
   }
 ```
 
+## Quick Start Guide
+
+ExMtnMomo provides high-level convenience functions for common operations:
+
+### Create a Sandbox User
+
+```elixir
+# Create a sandbox user with all required credentials in one call
+{:ok, user_details} = ExMtnMomo.create_sandbox_user("https://webhook.site/your-id")
+# => {:ok, %{
+#      "api_key" => "6418abf0507b4829a7ded11ca8f67cd7",
+#      "providerCallbackHost" => "https://webhook.site/your-id",
+#      "targetEnvironment" => "sandbox",
+#      "user_id" => "3d6df852-7be6-4870-be57-b784446a885c"
+#    }}
+```
+
+### Collect Funds (Request Payment from Customer)
+
+```elixir
+# Create a payment request with a single function call
+payment_details = %{
+  "amount" => "5000",
+  "currency" => "EUR",
+  "externalId" => "123456789",
+  "payer" => %{
+    "partyIdType" => "MSISDN",
+    "partyId" => "256771234567"
+  },
+  "payerMessage" => "Payment for order #12345",
+  "payeeNote" => "Customer payment received"
+}
+
+# Request payment (token creation handled automatically)
+{:ok, result} = ExMtnMomo.collect_funds(payment_details)
+# => {:ok, %{
+#      "x_reference_id" => "f1bfc995-8dbe-4afb-aa82-a8c75a37edf6",
+#      "status" => "pending",
+#      "message" => "Request to pay has been sent"
+#    }}
+
+# Check payment status
+{:ok, status} = ExMtnMomo.collections_check_transaction_status(result["x_reference_id"])
+# => {:ok, 
+#      %{
+#        "amount" => "5000",
+#        "currency" => "EUR",
+#        "externalId" => "123456789",
+#        "financialTransactionId" => "23503452",
+#        "payer" => %{
+#          "partyIdType" => "MSISDN",
+#          "partyId" => "256771234567"
+#        },
+#        "status" => "SUCCESSFUL"
+#      }
+#    }
+```
+
+### Disburse Funds (Send Payment to Customer)
+
+```elixir
+# Create a disbursement with a single function call
+disbursement_details = %{
+  "amount" => "1000",
+  "currency" => "EUR",
+  "externalId" => "987654321",
+  "payee" => %{
+    "partyIdType" => "MSISDN",
+    "partyId" => "256771234567"
+  },
+  "payerMessage" => "Salary payment",
+  "payeeNote" => "Monthly salary"
+}
+
+# Send the disbursement (token creation handled automatically)
+{:ok, _} = ExMtnMomo.disburse_funds(disbursement_details)
+# => {:ok, %{}}
+
+# Check disbursement status (requires reference_id from the disburse_funds call)
+reference_id = "f1bfc995-8dbe-4afb-aa82-a8c75a37edf6" # from the disburse_funds result
+{:ok, status} = ExMtnMomo.disbursements_check_transaction_status(reference_id)
+# => {:ok, 
+#      %{
+#        "amount" => "1000",
+#        "currency" => "EUR",
+#        "externalId" => "987654321",
+#        "financialTransactionId" => "45678901",
+#        "payee" => %{
+#          "partyIdType" => "MSISDN",
+#          "partyId" => "256771234567"
+#        },
+#        "status" => "SUCCESSFUL"
+#      }
+#    }
+```
+
 ## API Overview
 
 ExMtnMomo is organized into three main modules:
@@ -269,6 +365,16 @@ reference_id = UUID.uuid4()
 
 ## Complete Function List
 
+### High-Level Functions (ExMtnMomo)
+
+| Function | Description |
+|----------|-------------|
+| `create_sandbox_user/2` | Creates a sandbox user with all required credentials in one call |
+| `collect_funds/3` | Initiates a payment collection request (token creation handled automatically) |
+| `collections_check_transaction_status/2` | Checks the status of a payment collection request |
+| `disburse_funds/3` | Initiates a funds disbursement (token creation handled automatically) |
+| `disbursements_check_transaction_status/2` | Checks the status of a disbursement transaction |
+
 ### Sandbox Module
 
 | Function | Description |
@@ -319,8 +425,8 @@ reference_id = UUID.uuid4()
 All API calls return either `{:ok, result}` or `{:error, reason}`. This allows for clean error handling with pattern matching:
 
 ```elixir
-case ExMtnMomo.Collection.request_to_pay(payment_details, access_token, reference_id) do
-  {:ok, response} ->
+case ExMtnMomo.collect_funds(payment_details) do
+  {:ok, %{"x_reference_id" => reference_id}} ->
     # Handle successful payment request
     Logger.info("Payment request successful: #{reference_id}")
     {:ok, reference_id}

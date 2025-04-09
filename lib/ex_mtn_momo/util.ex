@@ -1,4 +1,5 @@
 defmodule ExMtnMomo.Util do
+  @moduledoc false
   @moduledoc """
   Provides utility functions and configuration handling for the ExMtnMomo library.
 
