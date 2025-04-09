@@ -1,7 +1,7 @@
 defmodule ExMtnMomo.MixProject do
   use Mix.Project
 
-  @version "0.1.1"
+  @version "0.1.2"
   @source_url "https://github.com/jamesnjovu/ex_mtn_momo"
   @description "Elixir library for MTN Mobile Money API integration"
 
