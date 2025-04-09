@@ -12,6 +12,43 @@ defmodule ExMtnMomo.Sandbox do
   This module is primarily used during development and testing to set up the
   necessary credentials for interacting with other MTN MoMo API endpoints.
 
+  ## Configuration Options
+
+  The Sandbox module uses the following configuration options:
+
+  * `:base_url` - The base URL for the MTN Mobile Money API
+    * Default: `"https://sandbox.momodeveloper.mtn.com"`
+
+  * `:sandbox_key` - The API key for sandbox operations
+    * This is typically your primary or secondary key provided by MTN
+    * Required for all sandbox operations
+
+  These options can be set in your `config.exs` file:
+
+  ```elixir
+  config :ex_mtn_momo,
+    base_url: "https://sandbox.momodeveloper.mtn.com",
+    sandbox_key: "your_primary_or_secondary_key"
+  ```
+
+  ## Runtime Options
+
+  Most functions in this module accept an `options` parameter that can be used to override
+  configuration values at runtime. The following options are supported:
+
+  * `:base_url` - Override the base URL for the API request
+  * `:sandbox_key` - Override the sandbox key for authentication
+
+  Example:
+
+  ```elixir
+  # Override the sandbox key for a specific request
+  options = [sandbox_key: "alternative_sandbox_key"]
+
+  uuid = ExMtnMomo.Sandbox.get_uuid4()
+  ExMtnMomo.Sandbox.create_api_user(uuid, "https://webhook.site/callback", options)
+  ```
+
   ## Examples
 
   ```elixir

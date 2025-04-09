@@ -14,6 +14,77 @@ defmodule ExMtnMomo.Disbursements do
   This module is used for sending payments to customers through
   the MTN Mobile Money platform.
 
+  ## Configuration Options
+
+  The Disbursements module uses the following configuration options:
+
+  ### Global Configuration
+
+  * `:base_url` - The base URL for the MTN Mobile Money API
+    * Default for sandbox: `"https://sandbox.momodeveloper.mtn.com"`
+    * Production: URL provided by MTN for your specific region
+
+  * `:x_target_environment` - The target environment for API requests
+    * Options: `"sandbox"` for testing, or a specific production environment like `"mtnzambia"`
+    * Default: `"sandbox"`
+
+  ### Disbursement-Specific Configuration
+
+  Disbursement credentials are configured as a map under the `:disbursement` key:
+
+  * `:disbursement.secondary_key` - Subscription key for the Disbursements API
+    * Used in the `Ocp-Apim-Subscription-Key` header
+    * Required for all Disbursement API operations
+
+  * `:disbursement.primary_key` - Alternative subscription key
+    * Can be used as a backup if the secondary key fails
+
+  * `:disbursement.user_id` - User ID for authentication
+    * Required for creating access tokens
+    * Used in the Basic Auth header
+
+  * `:disbursement.api_key` - API key for authentication
+    * Required for creating access tokens
+    * Used in the Basic Auth header
+
+  These options should be set in your `config.exs` file:
+
+  ```elixir
+  config :ex_mtn_momo,
+    base_url: "https://sandbox.momodeveloper.mtn.com",
+    x_target_environment: "sandbox",
+    disbursement: %{
+      secondary_key: "your_secondary_key",
+      primary_key: "your_primary_key",
+      user_id: "your_user_id",
+      api_key: "your_api_key"
+    }
+  ```
+
+  ## Runtime Options
+
+  Most functions in this module accept an `options` parameter that can be used to override
+  configuration values at runtime. The following options are supported:
+
+  * `:base_url` - Override the base URL for the API request
+  * `:secondary_key` - Override the secondary key to use for authentication
+  * `:primary_key` - Override the primary key to use for authentication
+  * `:user_id` - Override the user ID for authentication
+  * `:api_key` - Override the API key for authentication
+  * `:x_target_environment` - Override the target environment
+
+  Example:
+
+  ```elixir
+  # Override the secondary key and target environment for a specific request
+  options = [
+    secondary_key: "alternative_secondary_key",
+    x_target_environment: "production"
+  ]
+
+  {:ok, %{"access_token" => token}} = ExMtnMomo.Disbursements.create_access_token(options)
+  ```
+
   ## Examples
 
   ```elixir

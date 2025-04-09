@@ -13,6 +13,77 @@ defmodule ExMtnMomo.Collection do
   This module is used for receiving payments from customers through
   the MTN Mobile Money platform.
 
+  ## Configuration Options
+
+  The Collection module uses the following configuration options:
+
+  ### Global Configuration
+
+  * `:base_url` - The base URL for the MTN Mobile Money API
+    * Default for sandbox: `"https://sandbox.momodeveloper.mtn.com"`
+    * Production: URL provided by MTN for your specific region
+
+  * `:x_target_environment` - The target environment for API requests
+    * Options: `"sandbox"` for testing, or a specific production environment like `"mtnzambia"`
+    * Default: `"sandbox"`
+
+  ### Collection-Specific Configuration
+
+  Collection credentials are configured as a map under the `:collection` key:
+
+  * `:collection.secondary_key` - Subscription key for the Collection API
+    * Used in the `Ocp-Apim-Subscription-Key` header
+    * Required for all Collection API operations
+
+  * `:collection.primary_key` - Alternative subscription key
+    * Can be used as a backup if the secondary key fails
+
+  * `:collection.user_id` - User ID for authentication
+    * Required for creating access tokens
+    * Used in the Basic Auth header
+
+  * `:collection.api_key` - API key for authentication
+    * Required for creating access tokens
+    * Used in the Basic Auth header
+
+  These options should be set in your `config.exs` file:
+
+  ```elixir
+  config :ex_mtn_momo,
+    base_url: "https://sandbox.momodeveloper.mtn.com",
+    x_target_environment: "sandbox",
+    collection: %{
+      secondary_key: "your_secondary_key",
+      primary_key: "your_primary_key",
+      user_id: "your_user_id",
+      api_key: "your_api_key"
+    }
+  ```
+
+  ## Runtime Options
+
+  Most functions in this module accept an `options` parameter that can be used to override
+  configuration values at runtime. The following options are supported:
+
+  * `:base_url` - Override the base URL for the API request
+  * `:secondary_key` - Override the secondary key to use for authentication
+  * `:primary_key` - Override the primary key to use for authentication
+  * `:user_id` - Override the user ID for authentication
+  * `:api_key` - Override the API key for authentication
+  * `:x_target_environment` - Override the target environment
+
+  Example:
+
+  ```elixir
+  # Override the secondary key and target environment for a specific request
+  options = [
+    secondary_key: "alternative_secondary_key",
+    x_target_environment: "production"
+  ]
+
+  {:ok, %{"access_token" => token}} = ExMtnMomo.Collection.create_access_token(options)
+  ```
+
   ## Examples
 
   ```elixir
@@ -234,6 +305,39 @@ defmodule ExMtnMomo.Collection do
       }}
 
   """
+
+  @doc """
+  Checks the status of a payment request.
+
+  ## Parameters
+
+  * `reference_id` - The reference ID of the payment request
+  @spec get_account_balance_in_specific_currency(any(), any()) :: {:error, any()} | {:ok, any()}
+  * `access_token` - A valid access token
+  * `options` - Additional configuration options (optional)
+
+  ## Options
+
+  The `options` parameter can include the following keys:
+
+  * `:base_url` - Override the base URL for the API request
+  * `:secondary_key` - Override the secondary key to use for authentication
+  * `:x_target_environment` - Override the target environment
+
+  ## Returns
+
+  * `{:ok, status_details}` on success
+  * `{:error, reason}` on failure
+
+  ## Examples
+
+      iex> token = "eyJ0eXAi..."
+      iex> reference_id = "f1bfc995-8dbe-4afb-aa82-a8c75a37edf6"
+      iex> ExMtnMomo.Disbursements.request_to_pay_transaction_status(reference_id, token)
+      {:ok, %{"status" => "SUCCESSFUL", ...}}
+
+  """
+
   def request_to_pay_transaction_status(reference_id, access_token, options \\ []) do
     headers = [
       {"Ocp-Apim-Subscription-Key", Util.extract_collection_secondary_key(options)},
@@ -250,18 +354,6 @@ defmodule ExMtnMomo.Collection do
   end
 
   @doc """
-  attrs = %{
-         "amount" => "1000",
-         "currency" => "EUR",
-         "externalId" => "123456789",
-         "payer" => %{
-           "partyIdType" => "MSISDN",
-           "partyId" => "256771234567"
-         },
-         "payerMessage" => "Payment for products",
-         "payeeNote" => "Payment received"
-       }
-
   Retrieves the account balance for a specific currency.
 
   ## Parameters
