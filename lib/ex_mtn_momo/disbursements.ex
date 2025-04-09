@@ -444,12 +444,13 @@ defmodule ExMtnMomo.Disbursements do
       {:ok, %{}}
 
   """
-  def transfer(attrs, uuid4, options \\ []) do
+  def transfer(attrs, uuid4, access_token, options \\ []) do
     headers = [
-      {"Content-Type", "application/json"},
+      {"Ocp-Apim-Subscription-Key", Util.extract_disbursement_secondary_key(options)},
       {"X-Reference-Id", uuid4},
-      {"Authorization", Util.disbursement_auth(options)},
-      {"Ocp-Apim-Subscription-Key", Util.extract_disbursement_secondary_key(options)}
+      {"X-Target-Environment", Util.extract_x_target_environment(options)},
+      {"Authorization", "Bearer #{access_token}"},
+      {"Content-Type", "application/json"},
     ]
 
     "#{Util.extract_base_url(options)}/disbursement/v1_0/transfer"

@@ -2,6 +2,7 @@ defmodule ExMtnMomo.Util do
   alias ExMtnMomo.HttpRequest
 
   def extract_base_url(options \\ []), do: Keyword.get(options, :base_url, Application.get_env(:ex_mtn_momo, :base_url))
+  def extract_sand_box_key(options \\ []), do: Keyword.get(options, :sandbox_key, Application.get_env(:ex_mtn_momo, :sandbox_key))
 
   def extract_disbursement_secondary_key(options \\ []), do: Keyword.get(options, :secondary_key, Application.get_env(:ex_mtn_momo, :disbursement).secondary_key)
   def extract_disbursement_primary_key(options \\ []), do: Keyword.get(options, :primary_key, Application.get_env(:ex_mtn_momo, :disbursement).primary_key)
@@ -13,11 +14,11 @@ defmodule ExMtnMomo.Util do
   def extract_collection_api_key(options \\ []), do: Keyword.get(options, :api_key, Application.get_env(:ex_mtn_momo, :collection).api_key)
   def extract_x_target_environment(options \\ []), do: Keyword.get(options, :x_target_environment, Application.get_env(:ex_mtn_momo, :x_target_environment))
 
-  def collection_auth(options \\ []), do: basic_auth(extract_disbursement_user_id(options), extract_disbursement_api_key(options))
+  def collection_auth(options \\ []), do: basic_auth(extract_collection_user_id(options), extract_collection_api_key(options))
 
   def disbursement_auth(options \\ []), do: basic_auth(extract_disbursement_user_id(options), extract_disbursement_api_key(options))
 
-  def basic_auth(username, password), do: "Basic #{Base.encode64(username<>":"<>password)}"
+  def basic_auth(username, password), do: "Basic #{Base.encode64(username <> ":" <> password)}"
 
   @doc false
   def send_get(url, attrs, header) do

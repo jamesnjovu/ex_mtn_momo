@@ -83,7 +83,7 @@ defmodule ExMtnMomo.Sandbox do
 
     headers = [
       {"Content-Type", "application/json"},
-      {"Ocp-Apim-Subscription-Key", Util.extract_collection_secondary_key(options)},
+      {"Ocp-Apim-Subscription-Key", Util.extract_sand_box_key(options)},
       {"X-Reference-Id", uuid4}
     ]
 
@@ -125,7 +125,7 @@ defmodule ExMtnMomo.Sandbox do
   def get_created_user(uuid4, options \\ []) do
     headers = [
       {"Content-Type", "application/json"},
-      {"Ocp-Apim-Subscription-Key", Util.extract_collection_secondary_key(options)}
+      {"Ocp-Apim-Subscription-Key", Util.extract_sand_box_key(options)}
     ]
 
     "#{Util.extract_base_url(options)}/v1_0/apiuser/#{uuid4}"
@@ -166,7 +166,7 @@ defmodule ExMtnMomo.Sandbox do
   def get_api_key(uuid4, options \\ []) do
     headers = [
       {"Content-Type", "application/json"},
-      {"Ocp-Apim-Subscription-Key", Util.extract_collection_secondary_key(options)}
+      {"Ocp-Apim-Subscription-Key", Util.extract_sand_box_key(options)}
     ]
 
     "#{Util.extract_base_url(options)}/v1_0/apiuser/#{uuid4}/apikey"

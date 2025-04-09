@@ -250,6 +250,18 @@ defmodule ExMtnMomo.Collection do
   end
 
   @doc """
+  attrs = %{
+         "amount" => "1000",
+         "currency" => "EUR",
+         "externalId" => "123456789",
+         "payer" => %{
+           "partyIdType" => "MSISDN",
+           "partyId" => "256771234567"
+         },
+         "payerMessage" => "Payment for products",
+         "payeeNote" => "Payment received"
+       }
+
   Retrieves the account balance for a specific currency.
 
   ## Parameters
