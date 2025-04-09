@@ -35,6 +35,7 @@ Add your MTN MoMo API credentials to your `config.exs` file:
 config :ex_mtn_momo,
   base_url: "https://sandbox.momodeveloper.mtn.com",
   x_target_environment: "sandbox", # Options: "sandbox", "mtnzambia", etc.
+  sandbox_key: "your_secondary_key or your_primary_key",
   
   # Disbursement credentials
   disbursement: %{
