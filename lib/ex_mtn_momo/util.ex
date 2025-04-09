@@ -13,12 +13,12 @@ defmodule ExMtnMomo.Util do
   def extract_collection_api_key(options \\ []), do: Keyword.get(options, :api_key, Application.get_env(:ex_mtn_momo, :collection).api_key)
   def extract_x_target_environment(options \\ []), do: Keyword.get(options, :x_target_environment, Application.get_env(:ex_mtn_momo, :x_target_environment))
 
+  def collection_auth(options \\ []), do: basic_auth(extract_disbursement_user_id(options), extract_disbursement_api_key(options))
 
-  def collection_auth(options \\ []), do: basic_auth(extract_collection_user_id(options), extract_collection_api_key(options))
+  def disbursement_auth(options \\ []), do: basic_auth(extract_disbursement_user_id(options), extract_disbursement_api_key(options))
 
   def basic_auth(username, password), do: "Basic #{Base.encode64(username<>":"<>password)}"
 
-  @spec send_get(any(), any(), any()) :: {:error, any()} | {:ok, any()}
   @doc false
   def send_get(url, attrs, header) do
     HttpRequest.get(url, attrs, header)
@@ -28,7 +28,6 @@ defmodule ExMtnMomo.Util do
   @doc false
   def send_post(url, attrs, headers) do
     HttpRequest.post(url, attrs, headers)
-    |> IO.inspect
     |> HttpRequest.handle_response()
   end
 
