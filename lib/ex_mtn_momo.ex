@@ -1,4 +1,5 @@
 defmodule ExMtnMomo do
+  alias ExMtnMomo.{Disbursements, Collection, Sandbox}
   @moduledoc """
   Documentation for `ExMtnMomo`.
   """
