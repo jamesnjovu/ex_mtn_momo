@@ -2,7 +2,7 @@ import Config
 
 config :ex_mtn_momo,
   base_url: "https://sandbox.momodeveloper.mtn.com",
-  x_target_environment: "sandbox",
+  x_target_environment: "sandbox", # mtnzambia | sandbox
   disbursement: %{
     secondary_key: "542809304c684ef1ad69d0abd0365a27",
     primary_key: "c5fd5b948d48486182bacfec52b81146",
