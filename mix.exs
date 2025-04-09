@@ -1,7 +1,7 @@
 defmodule ExMtnMomo.MixProject do
   use Mix.Project
 
-  @version "0.1.0"
+  @version "0.1.1"
   @source_url "https://github.com/jamesnjovu/ex_mtn_momo"
   @description "Elixir library for MTN Mobile Money API integration"
 
@@ -16,10 +16,11 @@ defmodule ExMtnMomo.MixProject do
       # Hex package information
       package: package(),
       description: @description,
+      source_url: @source_url,
 
       # Docs
       name: "ExMtnMomo",
-      docs: docs()
+      docs: docs(),
     ]
   end
 
@@ -45,7 +46,11 @@ defmodule ExMtnMomo.MixProject do
     [
       maintainers: ["James Njovu"],
       licenses: ["MIT"],
-      links: %{"GitHub" => @source_url},
+      links: %{
+        "GitHub" => @source_url,
+        "Docs" => "https://hexdocs.pm/ex_mtn_momo"
+      },
+      description: @description,
       files: ~w(lib .formatter.exs mix.exs README.md LICENSE)
     ]
   end
@@ -55,14 +60,20 @@ defmodule ExMtnMomo.MixProject do
       main: "readme",
       source_url: @source_url,
       extras: ["README.md", "LICENSE"],
+      authors: ["James Njovu"],
+      formatters: ["html"],
+      source_ref: "v#{@version}",
       groups_for_modules: [
         "Main Modules": [
-          ExMtnMomo,
-          ExMtnMomo.Application
+          ExMtnMomo
         ],
-        "API Modules": [
-          ExMtnMomo.Sandbox,
-          ExMtnMomo.Collection,
+        "Sandbox Modules": [
+          ExMtnMomo.Sandbox
+        ],
+        "Collection Modules": [
+          ExMtnMomo.Collection
+        ],
+        "Disbursements Modules": [
           ExMtnMomo.Disbursements
         ]
       ]
