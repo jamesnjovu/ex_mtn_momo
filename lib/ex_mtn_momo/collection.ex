@@ -22,15 +22,32 @@ defmodule ExMtnMomo.Collection do
     base_url = Util.extract_base_url(options)
 
     headers = [
-      {"Content-Type", "application/json"},
+      {"Ocp-Apim-Subscription-Key", Util.extract_collection_secondary_key(options)},
       {"X-Reference-Id", uuid4},
-      {"Authorization", access_token},
       {"X-Target-Environment", Util.extract_x_target_environment(options)},
-      {"Ocp-Apim-Subscription-Key", Util.extract_collection_secondary_key(options)}
+      {"Authorization", "Bearer #{access_token}"},
+      {"Content-Type", "application/json"},
     ]
 
     "#{base_url}/collection/v1_0/requesttopay"
     |> Util.send_post(attrs, headers)
+    |> case do
+      {:ok, body} -> {:ok, body}
+      {:error, message} -> {:error, message}
+    end
+  end
+
+  def request_to_pay_transaction_status(reference_id, access_token,  options \\ []) do
+    base_url = Util.extract_base_url(options)
+
+    headers = [
+      {"Ocp-Apim-Subscription-Key", Util.extract_collection_secondary_key(options)},
+      {"X-Target-Environment", Util.extract_x_target_environment(options)},
+      {"Authorization", "Bearer #{access_token}"},
+    ]
+
+    "#{base_url}/collection/v1_0/requesttopay/#{reference_id}"
+    |> Util.send_get(%{}, headers)
     |> case do
       {:ok, body} -> {:ok, body}
       {:error, message} -> {:error, message}

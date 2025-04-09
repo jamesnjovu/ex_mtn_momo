@@ -24,16 +24,17 @@ defmodule ExMtnMomo.HttpRequest do
           do: HTTPoison.get(url, headers, @options),
           else: HTTPoison.get("#{url}?#{URI.encode_query(attrs)}", headers, @options))
 
-  def handle_response({:ok, %HTTPoison.Response{status_code: 200, body: ""}}), do: {:ok, ""}
+  def handle_response({:ok, %HTTPoison.Response{status_code: 200, body: ""}}), do: {:ok,	"Accepted"}
   def handle_response({:ok, %HTTPoison.Response{status_code: 200, body: body}}), do: {:ok, Jason.decode!(body)}
-  def handle_response({:ok, %HTTPoison.Response{status_code: 201, body: ""}}), do: {:ok, ""}
-  def handle_response({:ok, %HTTPoison.Response{status_code: 202, body: ""}}), do: {:ok, ""}
+  def handle_response({:ok, %HTTPoison.Response{status_code: 201, body: ""}}), do: {:ok, "Accepted"}
+  def handle_response({:ok, %HTTPoison.Response{status_code: 202, body: ""}}), do: {:ok, "Accepted"}
   def handle_response({:ok, %HTTPoison.Response{status_code: 201, body: body}}), do: {:ok, Jason.decode!(body)}
-  def handle_response({:ok, %HTTPoison.Response{status_code: 400, body: ""}}), do: {:error, ""}
+  def handle_response({:ok, %HTTPoison.Response{status_code: 400, body: ""}}), do: {:error, "400 Bad request, e.g. invalid data was sent in the request."}
   def handle_response({:ok, %HTTPoison.Response{status_code: 400, body: body}}), do: {:error, Jason.decode!(body)}
   def handle_response({:ok, %HTTPoison.Response{status_code: 401, body: body}}), do: {:error, Jason.decode!(body)}
   def handle_response({:ok, %HTTPoison.Response{status_code: 405, body: body}}), do: {:error, Jason.decode!(body)}
   def handle_response({:ok, %HTTPoison.Response{status_code: 408, body: body}}), do: {:error, Jason.decode!(body)}
+  def handle_response({:ok, %HTTPoison.Response{status_code: 409, body: ""}}), do: {:error, "Conflict, duplicated reference id"}
   def handle_response({:ok, %HTTPoison.Response{status_code: 409, body: body}}), do: {:error, Jason.decode!(body)}
   def handle_response({:ok, %HTTPoison.Response{status_code: 422, body: body}}), do: {:error, Jason.decode!(body)}
   def handle_response({:ok, %HTTPoison.Response{status_code: 500, body: body}}), do: {:error, Jason.decode!(body)}
