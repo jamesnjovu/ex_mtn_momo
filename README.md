@@ -22,7 +22,7 @@ Add `ex_mtn_momo` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:ex_mtn_momo, "~> 0.1.0"}
+    {:ex_mtn_momo, "~> 0.1.2"}
   ]
 end
 ```
